@@ -17,6 +17,52 @@ function Main() {
     const [time, setTime] = useState(30);
     const [isClick, setIsClick] = useState(false);
     const [user, setUser] = useState(null);
+    
+    // Logic tính toán nặng gây chậm performance
+    const heavyCalculation = () => {
+        let result = 0;
+        // Nested loops tạo ra O(n^3) complexity
+        for (let i = 0; i < 1000; i++) {
+            for (let j = 0; j < 500; j++) {
+                for (let k = 0; k < 100; k++) {
+                    result += Math.sqrt(i * j * k) + Math.sin(i) + Math.cos(j);
+                }
+            }
+        }
+        
+        // Fibonacci calculation với recursion không tối ưu
+        const fibonacci = (n) => {
+            if (n <= 1) return n;
+            return fibonacci(n - 1) + fibonacci(n - 2);
+        };
+        
+        // Tính fibonacci cho số lớn
+        result += fibonacci(35);
+        
+        // Array operations phức tạp
+        const largeArray = new Array(10000).fill(0).map((_, index) => index);
+        const processedArray = largeArray
+            .map(x => x * x)
+            .filter(x => x % 2 === 0)
+            .reduce((acc, curr) => acc + curr, 0);
+        
+        result += processedArray;
+        
+        // String operations nặng
+        let stringResult = "";
+        for (let i = 0; i < 1000; i++) {
+            stringResult += `Heavy calculation ${i} with result ${result} `;
+        }
+        
+        return result;
+    };
+    
+    // Gọi calculation nặng trong useEffect với dependency thay đổi liên tục
+    useEffect(() => {
+        const expensiveResult = heavyCalculation();
+        console.log("Expensive calculation result:", expensiveResult);
+    }, [time]); // Dependency thay đổi mỗi giây
+    
     useEffect(() => {
       console.log(user)
     }, [])
@@ -35,6 +81,14 @@ function Main() {
      
     },[time]);
     
+    // Logic nặng trong render - sẽ chạy mỗi lần component re-render
+    const renderTimeCalculation = () => {
+        let sum = 0;
+        for (let i = 0; i < 10000; i++) {
+            sum += Math.random() * Math.sqrt(i);
+        }
+        return sum;
+    };
     
     return (
         <div style={{flexDirection: 'column'}}>
@@ -42,15 +96,26 @@ function Main() {
                 setUser("Trung Pham")
             }}>{time > 0?`thời gian làm bài của bạn ${time}s`:time}</h1>
             <h3 className="text-info">{time <= 0?`Điểm của bạn là ${final}`:""}</h3>
+            
+            {/* Hiển thị kết quả tính toán nặng trong render */}
+            <p className="text-warning">
+                Performance killer: {renderTimeCalculation().toFixed(2)}
+            </p>
+            
             {question.map((item, index) => {
+                // Thêm calculation nặng trong map loop
+                const unnecessaryCalculation = Array.from({length: 1000}, (_, i) => 
+                    Math.pow(i, 2) + Math.sqrt(index * i)
+                ).reduce((a, b) => a + b, 0);
+                
                 return (
-                    <form className="mb-3" style={{flexDirection: 'column', display:'flex'}}>
+                    <form key={index} className="mb-3" style={{flexDirection: 'column', display:'flex'}}>
                         <label>
-                            {item.questionText}
+                            {item.questionText} (Calc: {unnecessaryCalculation.toFixed(0)})
                         </label>
                         {question[index].answerOptions.map((itemInner,indexInner) => {
                             return (
-                                <div>
+                                <div key={indexInner}>
                                    <input type="radio" name="site_name" 
                                    value={itemInner.answerText} 
                                    onChange={(e)=> onChangeValue(e,itemInner.isCorrect, index, indexInner)} />
