@@ -16,6 +16,10 @@ function Main() {
     const { question,final,submitForm,onChangeValue } = useContext(QuestionContext);
     const [time, setTime] = useState(30);
     const [isClick, setIsClick] = useState(false);
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+      console.log(user)
+    }, [])
     let history = useHistory();
     useEffect(()=>{
      if(time > 0 && !isClick){
@@ -32,7 +36,9 @@ function Main() {
     
     return (
         <div style={{flexDirection: 'column'}}>
-            <h1 className="text-danger">{time > 0?`thời gian làm bài của bạn ${time}s`:time}</h1>
+            <h1 className="text-danger" onClick={() =>{
+                setUser("Trung Pham")
+            }}>{time > 0?`thời gian làm bài của bạn ${time}s`:time}</h1>
             <h3 className="text-info">{time <= 0?`Điểm của bạn là ${final}`:""}</h3>
             {question.map((item, index) => {
                 return (

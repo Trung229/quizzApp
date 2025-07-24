@@ -18,7 +18,7 @@ import Main from './components/Main';
 import ErrorPage from './components/Error';
 
 function App() {
-  const [user, setUser] = useState(null);
+
   return (
     <UserContextProvider>
       <QuestionContextProvider>
