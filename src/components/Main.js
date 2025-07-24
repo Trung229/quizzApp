@@ -21,6 +21,7 @@ function Main() {
       console.log(user)
     }, [])
     let history = useHistory();
+    const unusedVar = 0
     useEffect(()=>{
      if(time > 0 && !isClick){
          setTimeout(()=>{
